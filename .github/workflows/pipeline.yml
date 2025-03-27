@@ -43,7 +43,7 @@ jobs:
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.64.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
 
   deploy:
     name: Deploy to Fly.io
