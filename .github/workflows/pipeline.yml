@@ -35,6 +35,16 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+  tag_release:
+    needs: [test_and_build]
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'push' }}  # Only deploy on push (not PRs)
+    steps:
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
   deploy:
     name: Deploy to Fly.io
     runs-on: ubuntu-latest
