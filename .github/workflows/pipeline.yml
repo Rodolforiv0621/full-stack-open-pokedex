@@ -41,6 +41,10 @@ jobs:
     if: ${{ github.event_name == 'push' }}  # Only deploy on push (not PRs)
     steps:
       - name: Bump version and push tag
+        uses: actions/checkout@v4
+        with:
+          # Required for the tag action to work properly
+          fetch-depth: 0  # Fetches all Git history, not just the latest commit
         uses: anothrNick/github-tag-action@1.64.0
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
