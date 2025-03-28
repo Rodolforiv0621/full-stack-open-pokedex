@@ -5,7 +5,6 @@ const useApi = (url, mapResults = (result) => result) => {
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState()
-
   useEffect(() => {
     setIsLoading(true)
     axios
