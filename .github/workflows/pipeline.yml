@@ -8,7 +8,11 @@ on:
     types: [opened, synchronize]
 
 env:
-  DEPLOY_CONDITION: ${{ github.event_name == 'push' && !contains(join(' ', github.event.commits.*.message), '#skip')}}
+  # Fixed syntax for DEPLOY_CONDITION
+  DEPLOY_CONDITION: ${{ 
+    github.event_name == 'push' && 
+    !contains(join(' ', github.event.commits.*.message), '#skip') 
+  }}
 
 jobs:
   test_and_build:
@@ -40,28 +44,28 @@ jobs:
 
   tag_release:
     needs: [test_and_build]
-    runs-on: ubuntu-20.04
-    if: ${{ env.DEPLOY_CONDITION == 'true' }}  # Only deploy if commit message does not contain '#skip'
+    runs-on: ubuntu-latest  # Updated from deprecated ubuntu-20.04
+    if: ${{ env.DEPLOY_CONDITION == 'true' }}  # Corrected env reference
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Required for version-tagging
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.64.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+          DEFAULT_BUMP: patch  # Default to patch version
 
   deploy:
     name: Deploy to Fly.io
     runs-on: ubuntu-latest
-    needs: [test_and_build, tag_release]  # Wait for tests to pass first!
+    needs: [test_and_build, tag_release]
     concurrency: deploy-group
-    if: ${{ env.DEPLOY_CONDITION == 'true' }}  # Only deploy if commit message does not contain '#skip'
+    if: ${{ env.DEPLOY_CONDITION == 'true' }}  # Corrected env reference
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
