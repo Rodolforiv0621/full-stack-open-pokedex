@@ -41,16 +41,15 @@ jobs:
   tag_release:
     needs: [test_and_build]
     runs-on: ubuntu-20.04  
-    
+    if: ${{ github.env.DEPLOY_CONDITION == 'true' }} # Only deploy if commit message does not contain '#skip'
     permissions:
       contents: write
     steps:
-      - if: ${{ env.DEPLOY_CONDITION == 'true' }} # Only deploy if commit message does not contain '#skip'
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - if: ${{ env.DEPLOY_CONDITION == 'true' }} # Only deploy if commit message does not contain '#skip'
+
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.64.0
         env:
@@ -62,9 +61,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test_and_build, tag_release]  # Wait for tests to pass first!
     concurrency: deploy-group
-    
+    if: ${{ github.env.DEPLOY_CONDITION == 'true' }}  # Only deploy if commit message does not contain '#skip'
     steps:
-      - if: ${{ github.env.DEPLOY_CONDITION == 'true' }}  # Only deploy if commit message does not contain '#skip'
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
