@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize]
 
 env:
-  DEPLOY_CONDITION: ${{ github.event_name == 'push' && !contains(join(' ', github.event.commits.*.message), '#skip')}}
+  DEPLOY_CONDITION: ${{ github.event_name == 'push' && !contains(join(' ', github.event.commits.*.message), '#skip') }}
 
 jobs:
   test_and_build:
