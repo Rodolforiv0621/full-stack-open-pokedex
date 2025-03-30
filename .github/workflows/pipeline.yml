@@ -1,5 +1,8 @@
 name: CI/CD Pipeline
 
+env: 
+  CONDITION: ${{ !contains(join(github.event.commits.*.message, ' '), '#skip') }} # Check if any commit message contains '#skip'
+
 on:
   push:
     branches: [main]
@@ -62,6 +65,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Check condition
+        run: echo "Condition: ${{ env.CONDITION }}"
+      - name: Run Fly
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
