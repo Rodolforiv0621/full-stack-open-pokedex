@@ -66,8 +66,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Check condition
-        run: echo "Condition ${{ env.CONDITION }}"
+        run: echo "Condition $env.CONDITION"
       - name: Run Fly
-      - run: flyctl deploy --remote-only
+        run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
