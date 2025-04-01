@@ -76,9 +76,25 @@ jobs:
     needs: [test_and_build]
     if: always()
     steps:
-      - name: Discord notification
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: deployment success discord notification
+        if: ${{ success() }}
+        uses: stegzilla/discord-notify@v2
         with:
-          args: 'The project has been deployed.'
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          title: New version of Pokedex deployed
+          message: |
+            successfully deployed
+            **by:** ${{ github.event.pusher.name }}
+          include_image: true
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+      - name: deployment failure discord notification
+        if: ${{ failure() }}
+        uses: stegzilla/discord-notify@v2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          title: Build failed
+          message: |
+            **Commit URL:** ${{ github.event.head_commit.url }}
+            **by:** ${{ github.event.pusher.name }}
+          include_image: true
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
